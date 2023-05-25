@@ -1,0 +1,831 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2023-05-25 jue 17:02 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Notes on DDD</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="mikel" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Notes on DDD</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orga6d1b64">1. Services</a>
+<ul>
+<li><a href="#org882a6db">1.1. Application services</a></li>
+<li><a href="#org11dbf31">1.2. Infrastructure services</a></li>
+<li><a href="#org24a180b">1.3. Sources</a></li>
+</ul>
+</li>
+<li><a href="#org97c2c8a">2. Model-Driven Design</a>
+<ul>
+<li><a href="#orgdd4d78e">2.1. Sources</a></li>
+</ul>
+</li>
+<li><a href="#orgea362b7">3. Domain Events</a>
+<ul>
+<li><a href="#orgd9435e5">3.1. Sources</a></li>
+</ul>
+</li>
+<li><a href="#org3e9d69b">4. Entities</a>
+<ul>
+<li><a href="#orgcc15544">4.1. Sources</a></li>
+</ul>
+</li>
+<li><a href="#org44edf8a">5. Repositories</a>
+<ul>
+<li><a href="#orgb8d5122">5.1. Sources</a></li>
+</ul>
+</li>
+<li><a href="#org9248726">6. Aggregates</a>
+<ul>
+<li><a href="#org0719b4c">6.1. Aggregate root</a></li>
+<li><a href="#orga033a14">6.2. Sources</a></li>
+</ul>
+</li>
+<li><a href="#orga60e8ae">7. Factories</a>
+<ul>
+<li><a href="#org66ade49">7.1. Sources</a></li>
+</ul>
+</li>
+<li><a href="#org8b22b37">8. Value Objects</a>
+<ul>
+<li><a href="#org129d783">8.1. Sources</a></li>
+</ul>
+</li>
+<li><a href="#org08ac3e0">9. Layered Architecture</a>
+<ul>
+<li><a href="#org00d8b41">9.1. Sources</a></li>
+</ul>
+</li>
+<li><a href="#orga39fb71">10. Ubiquitous Language</a>
+<ul>
+<li><a href="#orgd334215">10.1. Sources</a></li>
+</ul>
+</li>
+<li><a href="#org9ba1ed6">11. Core Domain</a>
+<ul>
+<li><a href="#orgbbe87ce">11.1. Domain</a></li>
+<li><a href="#orgaf4d504">11.2. Subdomain</a></li>
+<li><a href="#org0f69c75">11.3. Core domain</a></li>
+<li><a href="#org6dd6554">11.4. Supporting subdomain</a></li>
+<li><a href="#org630e9c8">11.5. Generic subdomain</a></li>
+<li><a href="#orgf4e7f83">11.6. Problem space</a></li>
+<li><a href="#org5c81d77">11.7. Solution space</a></li>
+<li><a href="#org37ff1a5">11.8. Red book example</a></li>
+<li><a href="#org29525a3">11.9. Sources</a></li>
+</ul>
+</li>
+<li><a href="#org7dffaf8">12. Generic subdomains</a></li>
+<li><a href="#org62938a8">13. Bounded Context</a>
+<ul>
+<li><a href="#orgbf97984">13.1. Open Host Service</a></li>
+<li><a href="#orgd72e985">13.2. Published Language</a></li>
+<li><a href="#org3b994e6">13.3. Sources</a></li>
+</ul>
+</li>
+<li><a href="#org72af20e">14. Continuous Integration</a>
+<ul>
+<li><a href="#orgb3d5e58">14.1. Sources:</a></li>
+</ul>
+</li>
+<li><a href="#org3d708fc">15. Context Map</a>
+<ul>
+<li><a href="#org81a3ba8">15.1. Team Relationships</a></li>
+<li><a href="#orgdd8ef72">15.2. Context Map patterns</a></li>
+<li><a href="#org9897225">15.3. Sources</a></li>
+</ul>
+</li>
+<li><a href="#org7497e97">16. Shared Kernel</a></li>
+<li><a href="#org230ea02">17. Customer / Supplier</a></li>
+<li><a href="#org428c165">18. Conformist</a></li>
+<li><a href="#org3fe615a">19. Open Host Service</a></li>
+<li><a href="#org0e29e4e">20. Published Language</a></li>
+<li><a href="#org3fad7f2">21. Separate Ways</a></li>
+<li><a href="#org64b74ca">22. Anti-Corruption Layer</a></li>
+<li><a href="#org48f2f6a">23. Big Ball of Mud</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orga6d1b64" class="outline-2">
+<h2 id="orga6d1b64"><span class="section-number-2">1</span> Services</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+<div id="outline-container-org882a6db" class="outline-3">
+<h3 id="org882a6db"><span class="section-number-3">1.1</span> Application services</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+Services in the application layer are responsible for fetching input data from outside of the domain, returns information about a result of the action, listens for an answer and decides if the communicational message should be sent.
+</p>
+</div>
+</div>
+<div id="outline-container-org11dbf31" class="outline-3">
+<h3 id="org11dbf31"><span class="section-number-3">1.2</span> Infrastructure services</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+Services in the infrastructure layer are services which implement an interface from the domain layer. A good example is a notification service. In the domain layer, you define an interface with actions we want to have eg sendEmailAboutLoan and in this layer we implement it.
+</p>
+
+<p>
+This is a place where you implement repositories or anything that depends on libraries we use in the program.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org24a180b" class="outline-3">
+<h3 id="org24a180b"><span class="section-number-3">1.3</span> Sources</h3>
+<div class="outline-text-3" id="text-1-3">
+<ul class="org-ul">
+<li><a href="https://developer20.com/services-in-ddd-finally-explained/">https://developer20.com/services-in-ddd-finally-explained/</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-org97c2c8a" class="outline-2">
+<h2 id="org97c2c8a"><span class="section-number-2">2</span> Model-Driven Design</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+There are many views on what Model Driven Design (henceforth MDD) is and what a Model Driven Architecture (henceforth MDA) should look like.
+</p>
+
+<p>
+Basically, MDA uses models to describe the business (functionality) of the solution, independent of any system constraints (software oriented decisions).
+</p>
+
+<p>
+In MDA, "platform-independent models are initially expressed in a platform-independent modeling language". In short, the model is described according to specification, independent from the programming language in which it will be transformed. The result source code will be described at the time with the model or after the model is finished, but the model will always have priority.
+</p>
+</div>
+
+<div id="outline-container-orgdd4d78e" class="outline-3">
+<h3 id="orgdd4d78e"><span class="section-number-3">2.1</span> Sources</h3>
+<div class="outline-text-3" id="text-2-1">
+<ul class="org-ul">
+<li><a href="https://todaysoftmag.com/article/1529/model-driven-design-theory-to-practice">https://todaysoftmag.com/article/1529/model-driven-design-theory-to-practice</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-orgea362b7" class="outline-2">
+<h2 id="orgea362b7"><span class="section-number-2">3</span> Domain Events</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+A domain event is, something that happened in the domain that you want other parts of the same domain (in-process) to be aware of. The notified parts usually react somehow to the events.
+</p>
+
+<p>
+An important benefit of domain events is that side effects can be expressed explicitly.
+</p>
+</div>
+
+<div id="outline-container-orgd9435e5" class="outline-3">
+<h3 id="orgd9435e5"><span class="section-number-3">3.1</span> Sources</h3>
+<div class="outline-text-3" id="text-3-1">
+<ul class="org-ul">
+<li><a href="https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/domain-events-design-implementation">https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/domain-events-design-implementation</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-org3e9d69b" class="outline-2">
+<h2 id="org3e9d69b"><span class="section-number-2">4</span> Entities</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+An object primarily defined by its identity is called an Entity.
+</p>
+
+<p>
+When you think of an Entity, imagine something that needs to be tracked over time and whose attributes are likely to change over time.
+</p>
+
+<p>
+A very strong indicator for something being an Entity is something like a status attribute (like pending, active, or inactive) or attribute prefixes like current or last.
+</p>
+
+<p>
+A requirement like "The object should be the same if the attributes are the same." is a strong indicator that it is probably not an Entity at all.
+</p>
+</div>
+
+<div id="outline-container-orgcc15544" class="outline-3">
+<h3 id="orgcc15544"><span class="section-number-3">4.1</span> Sources</h3>
+<div class="outline-text-3" id="text-4-1">
+<ul class="org-ul">
+<li><a href="https://blog.jannikwempe.com/domain-driven-design-entities-value-objects#heading-entities">https://blog.jannikwempe.com/domain-driven-design-entities-value-objects#heading-entities</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-org44edf8a" class="outline-2">
+<h2 id="org44edf8a"><span class="section-number-2">5</span> Repositories</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+Repository implementations are classes that encapsulate the logic required to access data sources. They centralize common data access functionality, providing better maintainability and decoupling the infrastructure or technology used to access databases from the domain model. If you use an Object-Relational Mapper (ORM) like Entity Framework, the code that must be implemented is simplified, thanks to LINQ and strong typing. This lets you focus on the data persistence logic rather than on data access plumbing.
+</p>
+
+<p>
+A repository performs the tasks of an intermediary between the domain model layers and data mapping, acting in a similar way to a set of domain objects in memory. Client objects declaratively build queries and send them to the repositories for answers. Conceptually, a repository encapsulates a set of objects stored in the database and operations that can be performed on them, providing a way that is closer to the persistence layer. Repositories, also, support the purpose of separating, clearly and in one direction, the dependency between the work domain and the data allocation or mapping.
+</p>
+</div>
+<div id="outline-container-orgb8d5122" class="outline-3">
+<h3 id="orgb8d5122"><span class="section-number-3">5.1</span> Sources</h3>
+<div class="outline-text-3" id="text-5-1">
+<ul class="org-ul">
+<li><a href="https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/infrastructure-persistence-layer-design">https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/infrastructure-persistence-layer-design</a></li>
+<li><a href="https://www.amazon.com/Patterns-Enterprise-Application-Architecture-Martin/dp/0321127420/">https://www.amazon.com/Patterns-Enterprise-Application-Architecture-Martin/dp/0321127420/</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-org9248726" class="outline-2">
+<h2 id="org9248726"><span class="section-number-2">6</span> Aggregates</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+A DDD aggregate is a cluster of domain objects that can be treated as a single unit. An example may be an order and its line-items, these will be separate objects, but it's useful to treat the order (together with its line items) as a single aggregate.
+</p>
+</div>
+<div id="outline-container-org0719b4c" class="outline-3">
+<h3 id="org0719b4c"><span class="section-number-3">6.1</span> Aggregate root</h3>
+<div class="outline-text-3" id="text-6-1">
+<p>
+An aggregate will have one of its component objects be the aggregate root. Any references from outside the aggregate should only go to the aggregate root. The root can thus ensure the integrity of the aggregate as a whole.
+</p>
+
+<p>
+In addition to controlling access, the aggregate root is also responsible for ensuring the consistency of the aggregate. This is why it is important to ensure that the aggregate root does not directly expose its children, but rather controls access itself.
+</p>
+
+<p>
+As an example, consider an e-commerce domain which has concepts for Orders, which have multiple OrderItems, each of which refers to some quantity of Products being purchased. Adding and removing items to an Order should be controlled by the Order - parts of the application shouldn't be able to reach out and create an individual OrderItem as part of an Order without going through the Order. Deleting an Order should delete all of the OrderItems that are associated with it. So, Order makes sense as an aggregate root for the Order - OrderItem group.
+</p>
+</div>
+</div>
+<div id="outline-container-orga033a14" class="outline-3">
+<h3 id="orga033a14"><span class="section-number-3">6.2</span> Sources</h3>
+<div class="outline-text-3" id="text-6-2">
+<ul class="org-ul">
+<li><a href="https://martinfowler.com/bliki/DDD_Aggregate.html">https://martinfowler.com/bliki/DDD_Aggregate.html</a></li>
+<li><a href="https://deviq.com/domain-driven-design/aggregate-pattern">https://deviq.com/domain-driven-design/aggregate-pattern</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-orga60e8ae" class="outline-2">
+<h2 id="orga60e8ae"><span class="section-number-2">7</span> Factories</h2>
+<div class="outline-text-2" id="text-7">
+<p>
+A Factory is an object that has the single responsibility of creating other objects.
+</p>
+
+<p>
+A Factory encapsulates the knowledge needed to create a complex object or Aggregate. The Factory needs to know a lot about the internal structure and dependencies of the object, but the Factory will shield this complexity from the outside world by providing an interface that reflects the goals of the client and an abstract view of the created object.
+</p>
+</div>
+<div id="outline-container-org66ade49" class="outline-3">
+<h3 id="org66ade49"><span class="section-number-3">7.1</span> Sources</h3>
+<div class="outline-text-3" id="text-7-1">
+<ul class="org-ul">
+<li><a href="https://culttt.com/2014/12/24/factories-domain-driven-design#what-is-a-factory">https://culttt.com/2014/12/24/factories-domain-driven-design#what-is-a-factory</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-org8b22b37" class="outline-2">
+<h2 id="org8b22b37"><span class="section-number-2">8</span> Value Objects</h2>
+<div class="outline-text-2" id="text-8">
+<p>
+A value object is a small object that represents a simple entity whose equality is not based on identity: i.e. two value objects are equal when they have the same value, not necessarily being the same object.
+</p>
+
+<p>
+Examples of value objects are objects representing an amount of money or a date range.
+</p>
+</div>
+<div id="outline-container-org129d783" class="outline-3">
+<h3 id="org129d783"><span class="section-number-3">8.1</span> Sources</h3>
+<div class="outline-text-3" id="text-8-1">
+<ul class="org-ul">
+<li><a href="https://en.wikipedia.org/wiki/Value_object">https://en.wikipedia.org/wiki/Value_object</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-org08ac3e0" class="outline-2">
+<h2 id="org08ac3e0"><span class="section-number-2">9</span> Layered Architecture</h2>
+<div class="outline-text-2" id="text-9">
+<p>
+A standard layered architecture has five parts:
+</p>
+
+<ul class="org-ul">
+<li>User interaction layer: This is the layer that interacts with users through screens, forms, menus, reports, etc. It is the most visible layer of the application. It defines how the application looks.</li>
+
+<li>Functionality layer: This is the layer that presents the functions, methods, and procedures of the system based on the business rules layer. It determines how the pull-down menus work, how the buttons work, and how the system navigates through screens.</li>
+
+<li>Business rules layer: This layer contains rules that determine the behavior of the whole application, such as, “If an invoice is printed, then send an email to the customer, select all items sold, and decrease their stock in the stock management module.”</li>
+
+<li>Application core layer: This server contains the main programs, code definitions, and basic functions of the application. Programmers work in this layer most of the time.</li>
+
+<li>Database layer: This layer contains the tables, indexes, and data managed by the application. Searches and insert/delete/update operations are executed here.</li>
+</ul>
+
+<p>
+An ERP System (accounts payable, accounts receivable, stock management, HR management, production management, provider management, purchasing, treasury, finance, accounting, etc.) has a user interaction layer for each module: screens, forms, menus, reports. This is what the user sees and what they use.  
+</p>
+
+<p>
+The functionality layer navigates through the different modules, presents screen sequences to the user, and does all data input operations. 
+</p>
+
+<p>
+The business rules layer determines the behavior of the modules of the ERP: “If a new employee is entered into the HR and payroll modules, then insert an introductory course in the employee's training menu.”
+</p>
+
+<p>
+The application core layer is the place where all system code is located. This is where developers add customizations and new functionalities.
+</p>
+
+<p>
+The database layer contains the tables, indexes, and data managed by each of the modules.
+</p>
+</div>
+<div id="outline-container-org00d8b41" class="outline-3">
+<h3 id="org00d8b41"><span class="section-number-3">9.1</span> Sources</h3>
+<div class="outline-text-3" id="text-9-1">
+<ul class="org-ul">
+<li><a href="https://openclassrooms.com/en/courses/6397806-design-your-software-architecture-using-industry-standard-patterns/6896176-layered-architecture">https://openclassrooms.com/en/courses/6397806-design-your-software-architecture-using-industry-standard-patterns/6896176-layered-architecture</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-orga39fb71" class="outline-2">
+<h2 id="orga39fb71"><span class="section-number-2">10</span> Ubiquitous Language</h2>
+<div class="outline-text-2" id="text-10">
+<p>
+Ubiquitous Language is the term Eric Evans uses in Domain Driven Design for the practice of building up a common, rigorous language between developers and users. This language should be based on the Domain Model used in the software - hence the need for it to be rigorous, since software doesn't cope well with ambiguity.
+</p>
+
+<p>
+Evans makes clear that using the ubiquitous language in conversations with domain experts is an important part of testing it, and hence the domain model. He also stresses that the language (and model) should evolve as the team's understanding of the domain grows.
+</p>
+</div>
+<div id="outline-container-orgd334215" class="outline-3">
+<h3 id="orgd334215"><span class="section-number-3">10.1</span> Sources</h3>
+<div class="outline-text-3" id="text-10-1">
+<p>
+<a href="https://martinfowler.com/bliki/UbiquitousLanguage.html">https://martinfowler.com/bliki/UbiquitousLanguage.html</a>
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-org9ba1ed6" class="outline-2">
+<h2 id="org9ba1ed6"><span class="section-number-2">11</span> Core Domain</h2>
+<div class="outline-text-2" id="text-11">
+</div>
+<div id="outline-container-orgbbe87ce" class="outline-3">
+<h3 id="orgbbe87ce"><span class="section-number-3">11.1</span> Domain</h3>
+<div class="outline-text-3" id="text-11-1">
+<p>
+The Domain is what an organization does and the environment in which it operates. A software developer working for an organization must work within its domain. 
+</p>
+</div>
+</div>
+<div id="outline-container-orgaf4d504" class="outline-3">
+<h3 id="orgaf4d504"><span class="section-number-3">11.2</span> Subdomain</h3>
+<div class="outline-text-3" id="text-11-2">
+<p>
+It is important to understand that when developing a model of the domain, it is necessary to focus on a specific subdomain, as it is almost impossible to create a single, all-encompassing business model even for moderately complex organizations. It is very important to divide models into logically separated subdomains according to their actual functionality. Subdomains allow different parts of the domain necessary to solve a particular problem to be identified more quickly.
+</p>
+</div>
+</div>
+<div id="outline-container-org0f69c75" class="outline-3">
+<h3 id="org0f69c75"><span class="section-number-3">11.3</span> Core domain</h3>
+<div class="outline-text-3" id="text-11-3">
+<p>
+The Core domain is a subdomain that has primary importance for the organization.
+</p>
+</div>
+</div>
+<div id="outline-container-org6dd6554" class="outline-3">
+<h3 id="org6dd6554"><span class="section-number-3">11.4</span> Supporting subdomain</h3>
+<div class="outline-text-3" id="text-11-4">
+<p>
+If a specific aspect of the business is being modeled that is important but not part of the Core domain, then it belongs to the Supporting subdomain. The business creates a Supporting subdomain because it has a specialization.
+</p>
+</div>
+</div>
+<div id="outline-container-org630e9c8" class="outline-3">
+<h3 id="org630e9c8"><span class="section-number-3">11.5</span> Generic subdomain</h3>
+<div class="outline-text-3" id="text-11-5">
+<p>
+If it does not have a specific purpose for the business and is required for the entire business as a whole, then it is called a Generic subdomain. These types of subdomains are important for business success, but they are not of primary importance. It is the Core domain that must be implemented perfectly, as it provides a business advantage.
+</p>
+</div>
+</div>
+<div id="outline-container-orgf4e7f83" class="outline-3">
+<h3 id="orgf4e7f83"><span class="section-number-3">11.6</span> Problem space</h3>
+<div class="outline-text-3" id="text-11-6">
+<p>
+The problem space is a part of the subject area that is necessary to create the core meaning. It is a combination of the core meaning and sub-domains that this core should use.
+</p>
+</div>
+</div>
+<div id="outline-container-org5c81d77" class="outline-3">
+<h3 id="org5c81d77"><span class="section-number-3">11.7</span> Solution space</h3>
+<div class="outline-text-3" id="text-11-7">
+<p>
+The solution space is one or several limited contexts, a set of specific software models. The developed limited context is a specific solution, a representation of implementation.
+</p>
+</div>
+</div>
+<div id="outline-container-org37ff1a5" class="outline-3">
+<h3 id="org37ff1a5"><span class="section-number-3">11.8</span> Red book example</h3>
+<div class="outline-text-3" id="text-11-8">
+<p>
+In Vernon’s book, an example is given of a core concept for a small retail company that operates online. Any online store can improve its position by using a forecasting mechanism that analyzes sales history and inventory data to predict demand and determine optimal inventory levels. (The company should not waste money on products that have no demand and take up additional warehouse space.) It is this core concept that makes the organization much more competitive, able to quickly identify profitable deals and guarantee the necessary inventory levels. The problem space consists of the core concept and subdomains related to procurement and inventory.
+</p>
+</div>
+</div>
+<div id="outline-container-org29525a3" class="outline-3">
+<h3 id="org29525a3"><span class="section-number-3">11.9</span> Sources</h3>
+<div class="outline-text-3" id="text-11-9">
+<p>
+<a href="https://levelup.gitconnected.com/domain-and-core-domain-in-ddd-c49733fa8c74">https://levelup.gitconnected.com/domain-and-core-domain-in-ddd-c49733fa8c74</a>
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-org7dffaf8" class="outline-2">
+<h2 id="org7dffaf8"><span class="section-number-2">12</span> Generic subdomains</h2>
+</div>
+<div id="outline-container-org62938a8" class="outline-2">
+<h2 id="org62938a8"><span class="section-number-2">13</span> Bounded Context</h2>
+<div class="outline-text-2" id="text-13">
+<p>
+A bounded context is simply the boundary within a domain where a particular domain model applies.
+</p>
+</div>
+<div id="outline-container-orgbf97984" class="outline-3">
+<h3 id="orgbf97984"><span class="section-number-3">13.1</span> Open Host Service</h3>
+<div class="outline-text-3" id="text-13-1">
+<p>
+The idea of Open Host Service is that a subsystem defines a formal protocol (API) for other subsystems to communicate with it.
+</p>
+</div>
+</div>
+<div id="outline-container-orgd72e985" class="outline-3">
+<h3 id="orgd72e985"><span class="section-number-3">13.2</span> Published Language</h3>
+<div class="outline-text-3" id="text-13-2">
+<p>
+It extends Open Host Service by publishing the API in a form that other teams can use to write clients.
+</p>
+</div>
+</div>
+<div id="outline-container-org3b994e6" class="outline-3">
+<h3 id="org3b994e6"><span class="section-number-3">13.3</span> Sources</h3>
+<div class="outline-text-3" id="text-13-3">
+<ul class="org-ul">
+<li><a href="https://learn.microsoft.com/en-us/azure/architecture/microservices/model/domain-analysis">https://learn.microsoft.com/en-us/azure/architecture/microservices/model/domain-analysis</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-org72af20e" class="outline-2">
+<h2 id="org72af20e"><span class="section-number-2">14</span> Continuous Integration</h2>
+<div class="outline-text-2" id="text-14">
+<p>
+When a number of people are working in the same bounded context there is a strong tendency for the model to fragment. The bigger the team, the bigger the problem, but as few as three or four people can encounter serious problems. Yet breaking down the system into ever-smaller contexts eventually loses a valuable level of integration and coherency.
+</p>
+
+<p>
+Therefore:
+</p>
+
+<p>
+Institute a process of merging all code and other implementation artifacts frequently, with automated tests to flag fragmentation quickly. Relentlessly exercise the ubiquitous language to hammer out a shared view of the model as the concepts evolve in different people's heads.
+</p>
+</div>
+<div id="outline-container-orgb3d5e58" class="outline-3">
+<h3 id="orgb3d5e58"><span class="section-number-3">14.1</span> Sources:</h3>
+<div class="outline-text-3" id="text-14-1">
+<ul class="org-ul">
+<li><a href="http://ddd.fed.wiki.org/view/continuous-integration">http://ddd.fed.wiki.org/view/continuous-integration</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-org3d708fc" class="outline-2">
+<h2 id="org3d708fc"><span class="section-number-2">15</span> Context Map</h2>
+<div class="outline-text-2" id="text-15">
+<p>
+Context Maps describe the contact between bounded contexts and teams with a collection of patterns. There are nine context map patterns and three different team relationships. The context map patterns describe a variety of perspectives like service provisioning, model propagation or governance aspects. This diversity of perspectives enables you to get a holistic overview of team and bounded context relationships.
+</p>
+
+<p>
+Context Maps can be used to analyze existing systems or application landscapes, but they are also suitable for upfront design considerations.
+</p>
+</div>
+<div id="outline-container-org81a3ba8" class="outline-3">
+<h3 id="org81a3ba8"><span class="section-number-3">15.1</span> Team Relationships</h3>
+<div class="outline-text-3" id="text-15-1">
+<ul class="org-ul">
+<li>Mutually Dependent</li>
+<li>Upstream Downstream</li>
+<li>Free</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgdd8ef72" class="outline-3">
+<h3 id="orgdd8ef72"><span class="section-number-3">15.2</span> Context Map patterns</h3>
+<div class="outline-text-3" id="text-15-2">
+<ul class="org-ul">
+<li>Open-host Service</li>
+<li>Conformist</li>
+<li>Anticorruption Layer</li>
+<li>Shared Kernel</li>
+<li>Partnership</li>
+<li>Customer / Supplier development</li>
+<li>Published language</li>
+<li>Separate Ways</li>
+<li>Big Ball Of Mud</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org9897225" class="outline-3">
+<h3 id="org9897225"><span class="section-number-3">15.3</span> Sources</h3>
+<div class="outline-text-3" id="text-15-3">
+<ul class="org-ul">
+<li><a href="https://github.com/ddd-crew/context-mappinghttps://github.com/ddd-crew/context-mapping">https://github.com/ddd-crew/context-mappinghttps://github.com/ddd-crew/context-mapping</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-org7497e97" class="outline-2">
+<h2 id="org7497e97"><span class="section-number-2">16</span> Shared Kernel</h2>
+</div>
+<div id="outline-container-org230ea02" class="outline-2">
+<h2 id="org230ea02"><span class="section-number-2">17</span> Customer / Supplier</h2>
+</div>
+<div id="outline-container-org428c165" class="outline-2">
+<h2 id="org428c165"><span class="section-number-2">18</span> Conformist</h2>
+</div>
+<div id="outline-container-org3fe615a" class="outline-2">
+<h2 id="org3fe615a"><span class="section-number-2">19</span> Open Host Service</h2>
+</div>
+<div id="outline-container-org0e29e4e" class="outline-2">
+<h2 id="org0e29e4e"><span class="section-number-2">20</span> Published Language</h2>
+</div>
+<div id="outline-container-org3fad7f2" class="outline-2">
+<h2 id="org3fad7f2"><span class="section-number-2">21</span> Separate Ways</h2>
+</div>
+<div id="outline-container-org64b74ca" class="outline-2">
+<h2 id="org64b74ca"><span class="section-number-2">22</span> Anti-Corruption Layer</h2>
+</div>
+<div id="outline-container-org48f2f6a" class="outline-2">
+<h2 id="org48f2f6a"><span class="section-number-2">23</span> Big Ball of Mud</h2>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: mikel</p>
+<p class="date">Created: 2023-05-25 jue 17:02</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
