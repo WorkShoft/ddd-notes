@@ -1,0 +1,206 @@
+#+TITLE: DDD Notes
+* Services
+** Application services
+Services in the application layer are responsible for fetching input data from outside of the domain, returns information about a result of the action, listens for an answer and decides if the communicational message should be sent.
+** Infrastructure services
+Services in the infrastructure layer are services which implement an interface from the domain layer. A good example is a notification service. In the domain layer, you define an interface with actions we want to have eg sendEmailAboutLoan and in this layer we implement it.
+
+This is a place where you implement repositories or anything that depends on libraries we use in the program.
+
+** Sources 
+- https://developer20.com/services-in-ddd-finally-explained/
+* Model-Driven Design
+There are many views on what Model Driven Design (henceforth MDD) is and what a Model Driven Architecture (henceforth MDA) should look like.
+
+Basically, MDA uses models to describe the business (functionality) of the solution, independent of any system constraints (software oriented decisions).
+
+In MDA, "platform-independent models are initially expressed in a platform-independent modeling language". In short, the model is described according to specification, independent from the programming language in which it will be transformed. The result source code will be described at the time with the model or after the model is finished, but the model will always have priority.
+
+** Sources
+- https://todaysoftmag.com/article/1529/model-driven-design-theory-to-practice
+* Domain Events
+A domain event is, something that happened in the domain that you want other parts of the same domain (in-process) to be aware of. The notified parts usually react somehow to the events.
+
+An important benefit of domain events is that side effects can be expressed explicitly.
+
+** Sources
+- https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/domain-events-design-implementation
+* Entities
+An object primarily defined by its identity is called an Entity.
+
+When you think of an Entity, imagine something that needs to be tracked over time and whose attributes are likely to change over time.
+
+A very strong indicator for something being an Entity is something like a status attribute (like pending, active, or inactive) or attribute prefixes like current or last.
+
+A requirement like "The object should be the same if the attributes are the same." is a strong indicator that it is probably not an Entity at all.
+
+** Sources
+- https://blog.jannikwempe.com/domain-driven-design-entities-value-objects#heading-entities
+* Repositories
+Repository implementations are classes that encapsulate the logic required to access data sources. They centralize common data access functionality, providing better maintainability and decoupling the infrastructure or technology used to access databases from the domain model. If you use an Object-Relational Mapper (ORM) like Entity Framework, the code that must be implemented is simplified, thanks to LINQ and strong typing. This lets you focus on the data persistence logic rather than on data access plumbing.
+
+A repository performs the tasks of an intermediary between the domain model layers and data mapping, acting in a similar way to a set of domain objects in memory. Client objects declaratively build queries and send them to the repositories for answers. Conceptually, a repository encapsulates a set of objects stored in the database and operations that can be performed on them, providing a way that is closer to the persistence layer. Repositories, also, support the purpose of separating, clearly and in one direction, the dependency between the work domain and the data allocation or mapping.
+** Sources
+- https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/infrastructure-persistence-layer-design
+- https://www.amazon.com/Patterns-Enterprise-Application-Architecture-Martin/dp/0321127420/
+* Aggregates
+ A DDD aggregate is a cluster of domain objects that can be treated as a single unit. An example may be an order and its line-items, these will be separate objects, but it's useful to treat the order (together with its line items) as a single aggregate.
+** Aggregate root
+An aggregate will have one of its component objects be the aggregate root. Any references from outside the aggregate should only go to the aggregate root. The root can thus ensure the integrity of the aggregate as a whole.
+
+In addition to controlling access, the aggregate root is also responsible for ensuring the consistency of the aggregate. This is why it is important to ensure that the aggregate root does not directly expose its children, but rather controls access itself.
+
+As an example, consider an e-commerce domain which has concepts for Orders, which have multiple OrderItems, each of which refers to some quantity of Products being purchased. Adding and removing items to an Order should be controlled by the Order - parts of the application shouldn't be able to reach out and create an individual OrderItem as part of an Order without going through the Order. Deleting an Order should delete all of the OrderItems that are associated with it. So, Order makes sense as an aggregate root for the Order - OrderItem group.
+** Sources
+- https://martinfowler.com/bliki/DDD_Aggregate.html
+- https://deviq.com/domain-driven-design/aggregate-pattern
+* Factories
+A Factory is an object that has the single responsibility of creating other objects.
+
+A Factory encapsulates the knowledge needed to create a complex object or Aggregate. The Factory needs to know a lot about the internal structure and dependencies of the object, but the Factory will shield this complexity from the outside world by providing an interface that reflects the goals of the client and an abstract view of the created object.
+** Sources
+- https://culttt.com/2014/12/24/factories-domain-driven-design#what-is-a-factory
+* Value Objects
+A value object is a small object that represents a simple entity whose equality is not based on identity: i.e. two value objects are equal when they have the same value, not necessarily being the same object.
+
+Examples of value objects are objects representing an amount of money or a date range.
+** Sources
+- https://en.wikipedia.org/wiki/Value_object
+* Layered Architecture
+A standard layered architecture has five parts:
+
+- User interaction layer: This is the layer that interacts with users through screens, forms, menus, reports, etc. It is the most visible layer of the application. It defines how the application looks.  
+
+- Functionality layer: This is the layer that presents the functions, methods, and procedures of the system based on the business rules layer. It determines how the pull-down menus work, how the buttons work, and how the system navigates through screens.
+
+- Business rules layer: This layer contains rules that determine the behavior of the whole application, such as, “If an invoice is printed, then send an email to the customer, select all items sold, and decrease their stock in the stock management module.” 
+
+- Application core layer: This server contains the main programs, code definitions, and basic functions of the application. Programmers work in this layer most of the time. 
+
+- Database layer: This layer contains the tables, indexes, and data managed by the application. Searches and insert/delete/update operations are executed here. 
+
+An ERP System (accounts payable, accounts receivable, stock management, HR management, production management, provider management, purchasing, treasury, finance, accounting, etc.) has a user interaction layer for each module: screens, forms, menus, reports. This is what the user sees and what they use.  
+
+The functionality layer navigates through the different modules, presents screen sequences to the user, and does all data input operations. 
+
+The business rules layer determines the behavior of the modules of the ERP: “If a new employee is entered into the HR and payroll modules, then insert an introductory course in the employee's training menu.”
+
+The application core layer is the place where all system code is located. This is where developers add customizations and new functionalities.
+
+The database layer contains the tables, indexes, and data managed by each of the modules.
+** Sources
+- https://openclassrooms.com/en/courses/6397806-design-your-software-architecture-using-industry-standard-patterns/6896176-layered-architecture
+* Ubiquitous Language
+Ubiquitous Language is the term Eric Evans uses in Domain Driven Design for the practice of building up a common, rigorous language between developers and users. This language should be based on the Domain Model used in the software - hence the need for it to be rigorous, since software doesn't cope well with ambiguity.
+
+Evans makes clear that using the ubiquitous language in conversations with domain experts is an important part of testing it, and hence the domain model. He also stresses that the language (and model) should evolve as the team's understanding of the domain grows.
+** Sources
+https://martinfowler.com/bliki/UbiquitousLanguage.html
+* Core Domain
+** Domain
+The Domain is what an organization does and the environment in which it operates. A software developer working for an organization must work within its domain. 
+** Subdomain
+ It is important to understand that when developing a model of the domain, it is necessary to focus on a specific subdomain, as it is almost impossible to create a single, all-encompassing business model even for moderately complex organizations. It is very important to divide models into logically separated subdomains according to their actual functionality. Subdomains allow different parts of the domain necessary to solve a particular problem to be identified more quickly.
+** Core domain
+The Core domain is a subdomain that has primary importance for the organization.
+** Supporting subdomain
+If a specific aspect of the business is being modeled that is important but not part of the Core domain, then it belongs to the Supporting subdomain. The business creates a Supporting subdomain because it has a specialization.
+** Generic subdomain
+If it does not have a specific purpose for the business and is required for the entire business as a whole, then it is called a Generic subdomain. These types of subdomains are important for business success, but they are not of primary importance. It is the Core domain that must be implemented perfectly, as it provides a business advantage.
+** Problem space
+The problem space is a part of the subject area that is necessary to create the core meaning. It is a combination of the core meaning and sub-domains that this core should use.
+** Solution space
+The solution space is one or several limited contexts, a set of specific software models. The developed limited context is a specific solution, a representation of implementation.
+** Red book example
+In Vernon’s book, an example is given of a core concept for a small retail company that operates online. Any online store can improve its position by using a forecasting mechanism that analyzes sales history and inventory data to predict demand and determine optimal inventory levels. (The company should not waste money on products that have no demand and take up additional warehouse space.) It is this core concept that makes the organization much more competitive, able to quickly identify profitable deals and guarantee the necessary inventory levels. The problem space consists of the core concept and subdomains related to procurement and inventory.
+** Sources
+https://levelup.gitconnected.com/domain-and-core-domain-in-ddd-c49733fa8c74
+* Generic subdomains
+* Bounded Context
+ A bounded context is simply the boundary within a domain where a particular domain model applies.
+** Open Host Service
+The idea of Open Host Service is that a subsystem defines a formal protocol (API) for other subsystems to communicate with it.
+** Published Language 
+It extends Open Host Service by publishing the API in a form that other teams can use to write clients.
+** Sources
+- https://learn.microsoft.com/en-us/azure/architecture/microservices/model/domain-analysis
+* Continuous Integration
+When a number of people are working in the same bounded context there is a strong tendency for the model to fragment. The bigger the team, the bigger the problem, but as few as three or four people can encounter serious problems. Yet breaking down the system into ever-smaller contexts eventually loses a valuable level of integration and coherency.
+
+Therefore:
+
+Institute a process of merging all code and other implementation artifacts frequently, with automated tests to flag fragmentation quickly. Relentlessly exercise the ubiquitous language to hammer out a shared view of the model as the concepts evolve in different people's heads.
+** Sources:
+- http://ddd.fed.wiki.org/view/continuous-integration
+* Context Map
+Context Maps describe the contact between bounded contexts and teams with a collection of patterns. There are nine context map patterns and three different team relationships. The context map patterns describe a variety of perspectives like service provisioning, model propagation or governance aspects. This diversity of perspectives enables you to get a holistic overview of team and bounded context relationships.
+
+Context Maps can be used to analyze existing systems or application landscapes, but they are also suitable for upfront design considerations.
+** Team Relationships
+- Mutually Dependent
+- Upstream Downstream
+- Free
+** Context Map patterns
+- Open-host Service
+- Conformist
+- Anticorruption Layer
+- Shared Kernel
+- Partnership
+- Customer / Supplier development
+- Published language
+- Separate Ways
+- Big Ball Of Mud
+** Sources
+- https://github.com/ddd-crew/context-mappinghttps://github.com/ddd-crew/context-mapping
+* Shared Kernel
+Sharing part of the model and associated code forms a very intimate interdependency, which can leverage design work or undermine it. Designate with an explicit boundary some subset of the domain model that the teams agree to share. Keep the kernel small. This explicit shared stuff has special status and shouldn’t be changed without consultation with the other team. Define a continuous integration process that will keep the kernel model tight and align the Ubiquitous Language of the teams.
+** Sources
+https://medium.com/geekculture/domain-driven-design-deep-dive-into-context-mapping-f9cd8acddd7e
+* Customer / Supplier
+Functionality is often partitioned such that one subsystem essentially feeds another; the second performs analysis or other functions that feed back very little into the first. In such cases, the two subsystems commonly serve very different user communities, with different jobs, where different models may be useful. The tool set may also be different, meaning that program code cannot be shared.
+
+The freewheeling development of the upstream team can be cramped if the downstream team has veto power over changes, or if procedures for requesting changes are too cumbersome. The upstream team may even be inhibited, worried about breaking the downstream system. Meanwhile, the downstream team can be helpless, at the mercy of upstream priorities.
+
+Establish a clear customer/supplier relationship between the two teams. In planning sessions, make the downstream team play the customer role to the upstream team. Negotiate and budget tasks for downstream requirements so that everyone understands the commitment and schedule.
+
+Jointly develop automated acceptance tests that will validate the interface expected. Add these tests to the upstream team's test suite, to be run as part of its continuous integration. This testing will free the upstream team to make changes without fear of side effects downstream.
+** Sources
+http://ddd.fed.wiki.org/view/customersupplier-development-teams
+* Conformist
+When two development teams have an upstream/downstream relationship in which the upstream has no motivation to provide for the downstream team's needs, the downstream team is helpless. Altruism may motivate upstream developers to make promises, but they are unlikely to be fulfilled. Belief in those good intentions leads the downstream team to make plans based on features that will never be available. The downstream project will be delayed until the team ultimately learns to live with what it is given. An interface tailored to the needs of the downstream team is not in the cards.
+
+Eliminate the complexity of translation between bounded context by slavishly adhering to the model of the upstream team. Although this cramps the style of the downstream designers and probably does not yield the ideal model for the application, choosing conformist enormously simplifies integration. Also, you will share a ubiquitous language with your supplier team. The supplier is in the driver's seat, so it is good to make communication easy for them. Altruism may be sufficient to get them to share information with you.
+** Sources
+http://ddd.fed.wiki.org/view/welcome-visitors/view/conformist
+* Open Host Service
+Define a protocol that gives access to your sub-system as a set of services. Open the protocol so that all who need to integrate with you can use it. Enhance and expand the protocol to handle new integration requirements, except when a single team has idiosyncratic needs. Then, use a one-off translator to augment the protocol for that special case so that the shared protocol can stay simple and coherent.
+** Sources
+https://pubs.opengroup.org/architecture/o-aa-standard/DDD-strategic-patterns.html
+* Published Language
+The translation between the models of two bounded contexts requires a common language. Use a well-documented shared language that can express the necessary domain information as a common medium of communication, translating as necessary into and out of that language. Published Language is often combined with Open Host Service.
+** Sources
+https://pubs.opengroup.org/architecture/o-aa-standard/DDD-strategic-patterns.html
+* Separate Ways
+If two sets of functionality have no significant relationship, they can be completely cut loose from each other. Integration is always expensive, and sometimes the benefit is small. Declare a bounded context to have no connection to the others at all, enabling developers to find simple, specialized solutions within this small scope.
+** Sources
+https://pubs.opengroup.org/architecture/o-aa-standard/DDD-strategic-patterns.html
+* Anti-Corruption Layer
+Most applications rely on other systems for some data or functionality. For example, when a legacy application is migrated to a modern system, it may still need existing legacy resources. New features must be able to call the legacy system. This is especially true of gradual migrations, where different features of a larger application are moved to a modern system over time.
+
+Often these legacy systems suffer from quality issues such as convoluted data schemas or obsolete APIs. The features and technologies used in legacy systems can vary widely from more modern systems. To interoperate with the legacy system, the new application may need to support outdated infrastructure, protocols, data models, APIs, or other features that you wouldn't otherwise put into a modern application.
+
+Isolate the different subsystems by placing an anti-corruption layer between them. This layer translates communications between the two systems, allowing one system to remain unchanged while the other can avoid compromising its design and technological approach.
+
+The anti-corruption layer contains all of the logic necessary to translate between the two systems. The layer can be implemented as a component within the application or as an independent service.
+
+** Sources
+https://learn.microsoft.com/en-us/azure/architecture/patterns/anti-corruption-layer
+* Big Ball of Mud
+A Big Ball of Mud is a haphazardly structured, sprawling, sloppy, duct-tape-and-baling-wire, spaghetti-code jungle. These systems show unmistakable signs of unregulated growth, and repeated, expedient repair. Information is shared promiscuously among distant elements of the system, often to the point where nearly all the important information becomes global or duplicated.
+
+The overall structure of the system may never have been well defined.
+
+If it was, it may have eroded beyond recognition. Programmers with a shred of architectural sensibility shun these quagmires. Only those who are unconcerned about architecture, and, perhaps, are comfortable with the inertia of the day-to-day chore of patching the holes in these failing dikes, are content to work on such systems.
+
+** Sources
+https://thedomaindrivendesign.io/big-ball-of-mud/
